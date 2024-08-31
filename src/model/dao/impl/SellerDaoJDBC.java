@@ -7,6 +7,7 @@ import model.entities.Department;
 import model.entities.Seller;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class SellerDaoJDBC implements SellerDao {
@@ -50,8 +51,7 @@ public class SellerDaoJDBC implements SellerDao {
             if (rs.next()) {
                 // criando um objeto associado
                 Department dep = instantiateDepartment(rs);
-                Seller seller = instantiateSeller(rs);
-                seller.setDepartment(dep);  // associando a classe department
+                Seller seller = instantiateSeller(rs, dep);
                 return seller;
             }
             return null;
@@ -63,29 +63,29 @@ public class SellerDaoJDBC implements SellerDao {
             DB.closeStatement(st);
             DB.closeResultSet(rs);
         }
-
-    }
-
-    // Não precisa capturar a excecoes, pois onde o método e chamando ja captura
-    private Department instantiateDepartment(ResultSet rs) throws SQLException {
-        Department dep = new Department();
-        dep.setId(rs.getInt("Id"));
-        dep.setName(rs.getString("Name"));
-        return dep;
-    }
-
-    private Seller instantiateSeller(ResultSet rs) throws SQLException {
-        Seller seller = new Seller();
-        seller.setName(rs.getString("Name"));
-        seller.setEmail(rs.getString("Email"));
-        seller.setBithDate(rs.getDate("BirthDate"));
-        seller.setBaseSalary(rs.getDouble("BaseSalary"));
-        seller.setDepartment(instantiateDepartment(rs)); // outro jeito de fazer isso, é instanciar o department.
-        return seller;
     }
 
     @Override
     public List<Seller> findAll() {
         return List.of();
+    }
+
+    // Não precisa capturar a excecoes, pois onde o método e chamando ja captura
+    private Department instantiateDepartment(ResultSet rs) throws SQLException {
+        Department dep = new Department();
+        dep.setId(rs.getInt("DepartmentId"));
+        dep.setName(rs.getString("DepName"));
+        return dep;
+    }
+
+    private Seller instantiateSeller(ResultSet rs, Department dep) throws SQLException {
+        Seller seller = new Seller();
+        seller.setId(rs.getInt("Id"));
+        seller.setName(rs.getString("Name"));
+        seller.setEmail(rs.getString("Email"));
+        seller.setBithDate(rs.getDate("BirthDate"));
+        seller.setBaseSalary(rs.getDouble("BaseSalary"));
+        seller.setDepartment(dep);
+        return seller;
     }
 }
