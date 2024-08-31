@@ -17,8 +17,13 @@ public class Program {
         Seller seller = sellerDao.findById(3);
         System.out.println(seller);
 
-        System.out.println("=== TEST 2: Seller findById ===");
+        System.out.println("\n=== TEST 2: Seller findById ===");
         List<Seller> list = sellerDao.findByDepartment(new Department(2, null));
+        for (Seller obj : list)
+            System.out.println(obj);
+
+        System.out.println("\n=== TEST 3: Seller findById ===");
+        list = sellerDao.findAll();
         for (Seller obj : list)
             System.out.println(obj);
 
