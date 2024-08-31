@@ -44,19 +44,14 @@ public class SellerDaoJDBC implements SellerDao {
                     + "ON seller.DepartmentId = department.Id "
                     + "WHERE seller.Id = ?");
             st.setInt(1, id);
-            rs = st.executeQuery();
+            rs = st.executeQuery(); // traz o dado em forma de tabela. Retorna 0 ou 1
 
+            // se retornar 1, é pq tem o objeto
             if (rs.next()) {
-                Department dep = new Department();
-                dep.setId(rs.getInt("DepartmentId"));
-                dep.setName(rs.getString("DepName"));
-                Seller seller = new Seller();
-                seller.setId(rs.getInt("Id"));
-                seller.setName(rs.getString("Name"));
-                seller.setEmail(rs.getString("Email"));
-                seller.setBithDate(rs.getDate("BirthDate"));
-                seller.setBaseSalary(rs.getDouble("BaseSalary"));
-                seller.setDepartment(dep);
+                // criando um objeto associado
+                Department dep = instantiateDepartment(rs);
+                Seller seller = instantiateSeller(rs);
+                seller.setDepartment(dep);  // associando a classe department
                 return seller;
             }
             return null;
@@ -69,6 +64,24 @@ public class SellerDaoJDBC implements SellerDao {
             DB.closeResultSet(rs);
         }
 
+    }
+
+    // Não precisa capturar a excecoes, pois onde o método e chamando ja captura
+    private Department instantiateDepartment(ResultSet rs) throws SQLException {
+        Department dep = new Department();
+        dep.setId(rs.getInt("Id"));
+        dep.setName(rs.getString("Name"));
+        return dep;
+    }
+
+    private Seller instantiateSeller(ResultSet rs) throws SQLException {
+        Seller seller = new Seller();
+        seller.setName(rs.getString("Name"));
+        seller.setEmail(rs.getString("Email"));
+        seller.setBithDate(rs.getDate("BirthDate"));
+        seller.setBaseSalary(rs.getDouble("BaseSalary"));
+        seller.setDepartment(instantiateDepartment(rs)); // outro jeito de fazer isso, é instanciar o department.
+        return seller;
     }
 
     @Override
