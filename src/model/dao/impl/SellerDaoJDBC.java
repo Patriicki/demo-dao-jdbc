@@ -75,7 +75,6 @@ public class SellerDaoJDBC implements SellerDao {
             st.setInt(5, seller.getDepartment().getId());
             st.setInt(6, seller.getId());
 
-            int rowsAffected = st.executeUpdate();
             st.executeUpdate();
         }
         catch (SQLException e) {
@@ -199,7 +198,7 @@ public class SellerDaoJDBC implements SellerDao {
                 if (dep == null) {
                     dep = instantiateDepartment(rs);
                     departmentMap.put(rs.getInt("DepartmentId"), dep);
-                }  // instanciando um department para todas instancia de seller.
+                }  // instanciando apenas um department para todas instancia de seller.
 
                 Seller seller = instantiateSeller(rs, dep);
                 sellerList.add(seller);
